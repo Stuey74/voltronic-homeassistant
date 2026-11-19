@@ -1,0 +1,18 @@
+--- a/inverter-cli/inverter.cpp
++++ b/inverter-cli/inverter.cpp
+@@ -99,12 +99,14 @@
+     // Speed settings (in this case, 2400 8N1)
+     struct termios settings;
+     tcgetattr(fd, &settings);
++    cfmakeraw(&settings);
+ 
++    cfsetispeed(&settings, baud);
+     cfsetospeed(&settings, baud);      // baud rate
+     settings.c_cflag &= ~PARENB;       // no parity
+     settings.c_cflag &= ~CSTOPB;       // 1 stop bit
+@@ -110,7 +112,7 @@
+     settings.c_oflag &= ~OPOST;        // raw output
+ 
+     tcsetattr(fd, TCSANOW, &settings); // apply the settings
+-    tcflush(fd, TCOFLUSH);
++    tcflush(fd, TCIOFLUSH);
